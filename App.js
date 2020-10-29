@@ -1,28 +1,36 @@
 import { StatusBar } from 'expo-status-bar';
 import React,{useState} from 'react';
-import { StyleSheet, Text, View, FlatList } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Button } from 'react-native';
 
 import ListItem from './components/ListItem';
 import HeaderInput from './components/HeaderInput';
 
 export default function App() {
   const [userList, setUserList] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const generateUniqueID = () => Date.now().toString(36) + Math.random().toString(36).substring(2)
 
   const addNewTask = (userInput) => {
-    setUserList([...userList, { key: generateUniqueID(), value: userInput}])
+    setUserList([...userList, { key: generateUniqueID(), value: userInput}]);
+    setIsModalOpen(false);
   }
 
   const onDelete = (key) => {
     let newList = userList.filter((item) => item.key !== key);
     setUserList(newList);
   } 
-
+  
+  const onCancel = () => {
+    setIsModalOpen(false);
+  }
   return (
-    <View>
+    <View style={styles.root}>
+      <Button title="ADD" onPress={() => setIsModalOpen(true)} />
       <HeaderInput
         onPress={addNewTask}
+        isModalOpen={isModalOpen}
+        onCancel={onCancel}
       />
       <FlatList 
         data={userList}
@@ -39,12 +47,9 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  header: {
+  root: {
     padding: 20,
-    paddingTop: 50,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems:'center',
+    paddingTop: 50
   },
   input: {
     borderBottomColor: 'gray',
@@ -60,6 +65,6 @@ const styles = StyleSheet.create({
     marginBottom: 5
   },
   userList: {
-    padding: 20
+    padding: 0
   }
 });
